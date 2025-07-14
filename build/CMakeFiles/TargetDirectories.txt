@@ -1,0 +1,3 @@
+/home/foksik/Projects/foolisRcon/build/CMakeFiles/foolisRcon.dir
+/home/foksik/Projects/foolisRcon/build/CMakeFiles/edit_cache.dir
+/home/foksik/Projects/foolisRcon/build/CMakeFiles/rebuild_cache.dir

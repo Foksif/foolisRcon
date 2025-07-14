@@ -1,0 +1,1 @@
+/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/foolisRcon.dir/link.d CMakeFiles/foolisRcon.dir/main.cpp.o CMakeFiles/foolisRcon.dir/RconClient.cpp.o CMakeFiles/foolisRcon.dir/utils/Network.cpp.o -o foolisRcon
