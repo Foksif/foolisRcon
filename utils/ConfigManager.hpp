@@ -12,4 +12,5 @@ class ConfigManager {
 public:
   static std::optional<ServerProfile> loadProfile(const std::string &name);
   static void interactiveAddProfile();
+  static void listProfiles();
 };

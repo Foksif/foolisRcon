@@ -28,7 +28,11 @@ ArgParser::ArgParser(int argc, char *argv[]) {
 }
 
 bool ArgParser::hasFlag(const std::string &flag) const {
-  return std::find(flags.begin(), flags.end(), flag) != flags.end();
+  if (std::find(flags.begin(), flags.end(), flag) != flags.end())
+    return true;
+  if (options.find(flag) != options.end())
+    return true;
+  return false;
 }
 
 std::optional<std::string>

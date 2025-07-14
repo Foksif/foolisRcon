@@ -73,3 +73,33 @@ void ConfigManager::interactiveAddProfile() {
   out << j.dump(4);
   std::cout << "Profile '" << name << "' added.\n";
 }
+
+void ConfigManager::listProfiles() {
+  std::string configPath =
+      std::string(getenv("HOME")) + "/.config/foolisRcon/servers.json";
+
+  std::ifstream file(configPath);
+  if (!file) {
+    std::cerr << "Config file not found. You can create profiles using 'add' "
+                 "command.\n";
+    return;
+  }
+
+  json j;
+  try {
+    file >> j;
+  } catch (const std::exception &e) {
+    std::cerr << "Failed to parse config: " << e.what() << "\n";
+    return;
+  }
+
+  if (j.empty()) {
+    std::cout << "No profiles available.\n";
+    return;
+  }
+
+  std::cout << "Available profiles:\n";
+  for (auto &el : j.items()) {
+    std::cout << " - " << el.key() << "\n";
+  }
+}

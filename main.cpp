@@ -6,8 +6,45 @@
 int main(int argc, char *argv[]) {
   ArgParser args(argc, argv);
 
+  if (args.hasFlag("--help") || args.hasFlag("-h")) {
+    std::cout << R"(foolisRcon — Simple RCON client
+
+Usage:
+  foolisRcon [options] [positional arguments]
+
+Options:
+  --profile <name>      Load a saved profile from ~/.config/foolisRcon/servers.json
+  --cmd <command>       Execute a single command and exit
+  --list-profiles       List all profiles
+  --help, -h            Show this help message
+
+Positional commands:
+  add                   Launch interactive mode to create a new profile
+
+Examples:
+  foolisRcon --profile local
+      Connect to the 'local' profile and start interactive command mode.
+
+  foolisRcon --profile local --cmd "say hello"
+      Send a one-time command to the server and exit.
+
+  foolisRcon add
+      Enter interactive mode to add a new server profile.
+
+Config file:
+  ~/.config/foolisRcon/servers.json
+      Stores all RCON connection profiles in JSON format.
+)";
+    return 0;
+  }
+
   if (!args.getPositional().empty() && args.getPositional()[0] == "add") {
     ConfigManager::interactiveAddProfile();
+    return 0;
+  }
+
+  if (args.hasFlag("--list-profiles")) {
+    ConfigManager::listProfiles();
     return 0;
   }
 
