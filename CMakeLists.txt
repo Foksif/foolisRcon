@@ -9,6 +9,8 @@ add_executable(foolisRcon
     main.cpp
     RconClient.cpp
     utils/Network.cpp
+    utils/ArgParser.cpp
+    utils/ConfigManager.cpp
 )
 
 target_include_directories(foolisRcon PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/utils)
