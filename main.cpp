@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
   }
 
   if (auto opt = args.getOption("--profile")) {
-    if (*opt == "") {
+    if (opt->empty()) {
       std::cout << "Enter profile name: ";
       std::cin >> *opt;
     }
