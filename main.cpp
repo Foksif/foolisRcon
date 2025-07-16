@@ -3,11 +3,71 @@
 #include "utils/ConfigManager.hpp"
 #include <iostream>
 
+void profile(std::string profileName, ArgParser args);
+void helpMsg();
+
 int main(int argc, char *argv[]) {
   ArgParser args(argc, argv);
 
   if (args.hasFlag("--help") || args.hasFlag("-h")) {
-    std::cout << R"(foolisRcon — Simple RCON client
+    helpMsg();
+    return 0;
+  }
+
+  if (!args.getPositional().empty() && args.getPositional()[0] == "add") {
+    ConfigManager::interactiveAddProfile();
+    return 0;
+  }
+
+  if (args.hasFlag("--list-profiles")) {
+    ConfigManager::listProfiles();
+    return 0;
+  }
+
+  if (auto opt = args.getOption("--profile")) {
+    if (*opt == "") {
+      std::cout << "Enter profile name: ";
+      std::cin >> *opt;
+    }
+    profile(*opt, args);
+  } else {
+    helpMsg();
+    return 0;
+  }
+
+  return 0;
+}
+
+void profile(std::string profileName, ArgParser args) {
+  auto profile = ConfigManager::loadProfile(profileName);
+  if (!profile)
+    return;
+
+  RconClient client(profile->host, profile->port, profile->password);
+  if (!client.connect()) {
+    std::cerr << "Connection error.\n";
+    return;
+  }
+
+  std::cin.ignore();
+  std::string command;
+
+  if (auto cmd = args.getOption("--cmd")) {
+    std::cout << client.sendCommand(*cmd) << "\n";
+    return;
+  }
+
+  while (true) {
+    std::cout << "> ";
+    std::getline(std::cin, command);
+    if (command == "exit")
+      break;
+    std::cout << client.sendCommand(command) << "\n";
+  }
+}
+
+void helpMsg() {
+  std::cout << R"(foolisRcon — Simple RCON client
 
 Usage:
   foolisRcon [options] [positional arguments]
@@ -35,52 +95,4 @@ Config file:
   ~/.config/foolisRcon/servers.json
       Stores all RCON connection profiles in JSON format.
 )";
-    return 0;
-  }
-
-  if (!args.getPositional().empty() && args.getPositional()[0] == "add") {
-    ConfigManager::interactiveAddProfile();
-    return 0;
-  }
-
-  if (args.hasFlag("--list-profiles")) {
-    ConfigManager::listProfiles();
-    return 0;
-  }
-
-  std::string profileName;
-  if (auto opt = args.getOption("--profile"))
-    profileName = *opt;
-  else {
-    std::cout << "Enter profile name: ";
-    std::cin >> profileName;
-  }
-
-  auto profile = ConfigManager::loadProfile(profileName);
-  if (!profile)
-    return 1;
-
-  RconClient client(profile->host, profile->port, profile->password);
-  if (!client.connect()) {
-    std::cerr << "Connection error.\n";
-    return 1;
-  }
-
-  std::cin.ignore();
-  std::string command;
-
-  if (auto cmd = args.getOption("--cmd")) {
-    std::cout << client.sendCommand(*cmd) << "\n";
-    return 0;
-  }
-
-  while (true) {
-    std::cout << "> ";
-    std::getline(std::cin, command);
-    if (command == "exit")
-      break;
-    std::cout << client.sendCommand(command) << "\n";
-  }
-
-  return 0;
 }
